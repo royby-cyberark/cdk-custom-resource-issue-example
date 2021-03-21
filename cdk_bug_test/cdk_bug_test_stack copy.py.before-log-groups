@@ -1,0 +1,27 @@
+from aws_cdk import core
+import aws_cdk.aws_iam as iam
+import aws_cdk.custom_resources as cr
+import aws_cdk.aws_elasticsearch as es
+
+
+class CdkBugTestStack(core.Stack):
+
+    def __init__(self, scope: core.Construct, construct_id: str, **kwargs) -> None:
+        super().__init__(scope, construct_id, **kwargs)
+
+        role = iam.Role(scope=self, id='AwsCustomResourceRole', assumed_by=iam.ServicePrincipal('lambda.amazonaws.com'));
+        role.add_to_policy(iam.PolicyStatement(actions=['iam:PassRole' ], resources=['*']))
+
+        cr.AwsCustomResource(
+            scope=self, id='MyAwsCustomResource', 
+            role=role,
+            policy=cr.AwsCustomResourcePolicy.from_sdk_calls(resources=['*']),
+            on_create=cr.AwsSdkCall(
+                action='listBuckets',
+                service='s3',
+                physical_resource_id=cr.PhysicalResourceId.of('BucketsList'),)
+        )
+
+        es.Domain(scope=self, id='Domain', 
+                version=es.ElasticsearchVersion.V7_9, 
+                logging=es.LoggingOptions(app_log_enabled=True))

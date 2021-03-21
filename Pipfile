@@ -1,0 +1,15 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+cdk-bug-test = {editable = true,file = "file:///Users/Roy.BenYosef/dev/cdk-bug-test"}
+aws-cdk-aws-iam = "*"
+aws-cdk-custom-resources = "*"
+aws-cdk-aws-elasticsearch = "*"
+
+[requires]
+python_version = "3.8"
